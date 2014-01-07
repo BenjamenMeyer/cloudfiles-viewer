@@ -1,0 +1,5 @@
+{
+    'user': '<username>',
+    'apikey': '<apikey>',
+    'request-limit': 10
+}

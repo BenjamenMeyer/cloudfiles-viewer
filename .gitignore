@@ -1,0 +1,5 @@
+env
+conf/users.json
+output/*
+*.pyc
+*.swp
