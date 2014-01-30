@@ -303,6 +303,10 @@ def main():
     # Authenticate the user
     auth_engine = Authentication(user_data['user'], user_data['apikey'])
     auth_token = auth_engine.AuthToken
+    if auth_token is None:
+        print('Invalid API Key or User Name')
+        return -1
+
     # CloudFIles Access
     cloudfiles_engine = CloudFiles(True, auth_engine)
     print('Received AuthToken: ' + auth_token)
