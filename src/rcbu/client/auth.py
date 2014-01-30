@@ -49,7 +49,7 @@ class Authentication(Command):
             self.auth_data = response.json()
             self.log.info('auth token: %s', self.auth_data['access']['token']['id'])
             return self.auth_data['access']['token']['id']
-        elif response.status is 404:
+        elif response.status_code is 404:
             self.log.error('server return unavailable. Trying again up to ' + str(retry) + ' times.')
             if retry is 0:
                 assert False
