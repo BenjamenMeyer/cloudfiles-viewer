@@ -3,6 +3,7 @@ Rackspace CloudFiles Viewer
 """
 from __future__ import print_function
 
+import os
 import json
 import sys
 import logging
@@ -192,6 +193,20 @@ def prompt_get_container(cloudfiles_engine, cf_container_uri, cf_container_limit
     return return_container
 
 
+def prompt_download():
+    """
+    Ask the user if they want to download the object
+    """
+    while True:
+        result = raw_input('Download? [y/n]')
+        if result == 'y' or result == 'Y':
+            return True
+        elif result == 'n' or result == 'N':
+            return False
+        else:
+            print('Invalid input. Please try again')
+
+
 def prompt_list_container(cloudfiles_engine, cf_container_uri, cf_container, cf_object_limit=10):
     """
     List the contents of a container in CloudFiles for the user
@@ -250,6 +265,11 @@ def prompt_list_container(cloudfiles_engine, cf_container_uri, cf_container, cf_
                         print('\t\tContent-Type: ' + cf_objects[object_selection]['content_type'])
                         print('\t\tLast Modified: ' + cf_objects[object_selection]['last_modified'])
                         print('\t\tHash: ' + cf_objects[object_selection]['hash'])
+
+                        if prompt_download():
+                            target_location = os.getcwd() + '/' + cf_objects[object_selection]['name']
+                            cloudfiles_engine.DownloadObject(cf_container_uri, cf_container, cf_objects[object_selection], target_location)
+
                         # Wait for the user
                         try:
                             dummy = input('\tPress ENTER to continue')
