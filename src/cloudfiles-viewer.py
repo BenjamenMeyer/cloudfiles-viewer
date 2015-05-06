@@ -304,16 +304,23 @@ def main():
     #
     argument_parse = argparse.ArgumentParser(prog='cloudfilews-viewer', description='Rackspace CloudFiles Viewer')
     argument_parse.add_argument('--user', required=True, help='Specify a text file containing the JSON data for the \'user\' and \'apikey\' values for authentication', metavar='User Auth Data', type=argparse.FileType('r'))
-    argument_parse.add_argument('--log-config', required=False, help='Specify the log configuration data', metavar='Log config')
+    argument_parse.add_argument('--log-config', type=str, required=False, help='Specify the log configuration data', metavar='Log config')
     arguments = argument_parse.parse_args()
 
     # log config is optional
-    try:
-        log_config_file = str(arguments.log_config)
-        logging.config.fileConfig(str(log_config_file))
-    except LookupError:
-        # Don't configure the logger
-        pass
+    if arguments.log_config is not None:
+        logging.config.fileConfig(arguments.log_config)
+    else:
+        lh = logging.StreamHandler(sys.stdout)
+        lh.setLevel(logging.DEBUG)
+
+        lf = logging.FileHandler('.cloudfiles-viewer-py.log')
+        lf.setLevel(logging.DEBUG)
+
+        log = logging.getLogger()
+        log.addHandler(lh)
+        log.addHandler(lf)
+        log.setLevel(logging.DEBUG)
 
     # Load the user data
     user_data = json.load(arguments.user)
@@ -330,6 +337,7 @@ def main():
     # CloudFIles Access
     cloudfiles_engine = CloudFiles(True, auth_engine)
     print('Received AuthToken: ' + auth_token)
+    print('        Expires at: ' + auth_engine.AuthExpirationTime)
 
     # Loop over user selecting the data center
     continue_dc_search = True
